@@ -5,7 +5,25 @@
     Modified by: xZetsubou
 """
 
-from .base import DPCode, LocalTuyaEntity, CONF_DEVICE_CLASS, EntityCategory
+from typing import Mapping, Optional
+
+from custom_components.localtuya.const import CONF_TRIGGER_TYPES
+
+from .base import (CLOUD_VALUE, CONF_DEVICE_CLASS, DPCode, EntityCategory,
+                   LocalTuyaEntity)
+
+
+def localtuya_button_entities(base_entity: LocalTuyaEntity, click_type_to_friendly_name: Mapping[str, Optional[str]]):
+    """Generate localtuya button configs"""
+
+    for click_type, friendly_name in click_type_to_friendly_name.itmes():
+        if not friendly_name:
+            friendly_name = click_type
+
+        entity = copy(base_entity)
+        entity.name += f" (friendly_name)"
+        entity.localtuya_conf = {"value": click_type}
+
 
 BUTTONS: dict[str, tuple[LocalTuyaEntity, ...]] = {
     # Scene Switch
@@ -175,4 +193,71 @@ BUTTONS: dict[str, tuple[LocalTuyaEntity, ...]] = {
 
 # Wireless Switch  # also can come as knob switch.
 # https://developer.tuya.com/en/docs/iot/wxkg?id=Kbeo9t3ryuqm5
-BUTTONS["wxkg"] = BUTTONS["cjkg"]
+BUTTONS["wxkg"] = (
+    *BUTTONS["cjkg"],
+    *localtuya_button_entities(
+        LocalTuyaEntity(
+            id=(DPCode.SWITCH1_VALUE, DPCode.SWITCH_TYPE_1),
+            name="Switch 1",
+            icon="mdi:square-outline",
+            condition_contains_any=["single_click", "double_click", "long_press"],
+        ),
+        {
+            "single_click": "Single Click",
+            "double_click": "Double Click",
+            "long_press": "Long Press"
+        }
+    ),
+    localtuya_button_entities(
+        LocalTuyaEntity(
+            id=(DPCode.SWITCH2_VALUE, DPCode.SWITCH_TYPE_2),
+            name="Switch 2",
+            icon="mdi:square-outline",
+            condition_contains_any=["single_click", "double_click", "long_press"],
+        ),
+        {
+            "single_click": "Single Click",
+            "double_click": "Double Click",
+            "long_press": "Long Press"
+        }
+    ),
+    LocalTuyaEntity(
+        id=(DPCode.SWITCH3_VALUE, DPCode.SWITCH_TYPE_3),
+        name="Switch 3",
+        icon="mdi:square-outline",
+        custom_configs=localtuya_selector(
+            {
+                "single_click": "Single click",
+                "double_click": "Double click",
+                "long_press": "Long Press",
+            }
+        ),
+        condition_contains_any=["single_click", "double_click", "long_press"],
+    ),
+    LocalTuyaEntity(
+        id=(DPCode.SWITCH4_VALUE, DPCode.SWITCH_TYPE_4),
+        name="Switch 4",
+        icon="mdi:square-outline",
+        custom_configs=localtuya_selector(
+            {
+                "single_click": "Single click",
+                "double_click": "Double click",
+                "long_press": "Long Press",
+            }
+        ),
+        condition_contains_any=["single_click", "double_click", "long_press"],
+    ),
+    LocalTuyaEntity(
+        id=(DPCode.SWITCH5_VALUE, DPCode.SWITCH_TYPE_5),
+        name="Switch 5",
+        icon="mdi:square-outline",
+        custom_configs=localtuya_selector(
+            {
+                "single_click": "Single click",
+                "double_click": "Double click",
+                "long_press": "Long Press",
+            }
+        ),
+        condition_contains_any=["single_click", "double_click", "long_press"],
+    ),
+)

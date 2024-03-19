@@ -158,6 +158,9 @@ CONF_STEPSIZE = "step_size"
 CONF_OPTIONS = "select_options"
 CONF_OPTIONS_FRIENDLY = "select_options_friendly"
 
+# button
+CONF_TRIGGER_TYPES = "trigger_types"
+
 # Remote
 CONF_RECEIVE_DP = "receive_dp"
 
